@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="指针变量指针是一种变量，也称指针变量，它的值是内存地址。指针包含的是变量的地址，而变量又有自己的具体值。变量名是直接引用了一个值，指针名是间接引用了一个值。 为什么指针有类型？ 因为指针的算术运算会暗度陈仓，如果对char指针加1，指针会指向存储器中下一个地址，那是因为char就占1个字节；如果是int指针，int通常占4个字节，如果对int指针加1，编译后的代码就会对存储器地址加4    数据类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="指针详解">
+<meta property="og:url" content="http://yoursite.com/2018/10/10/指针详解/index.html">
+<meta property="og:site_name" content="小鱼仙馆的正宫">
+<meta property="og:description" content="指针变量指针是一种变量，也称指针变量，它的值是内存地址。指针包含的是变量的地址，而变量又有自己的具体值。变量名是直接引用了一个值，指针名是间接引用了一个值。 为什么指针有类型？ 因为指针的算术运算会暗度陈仓，如果对char指针加1，指针会指向存储器中下一个地址，那是因为char就占1个字节；如果是int指针，int通常占4个字节，如果对int指针加1，编译后的代码就会对存储器地址加4    数据类">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-31T11:58:05.816Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="指针详解">
+<meta name="twitter:description" content="指针变量指针是一种变量，也称指针变量，它的值是内存地址。指针包含的是变量的地址，而变量又有自己的具体值。变量名是直接引用了一个值，指针名是间接引用了一个值。 为什么指针有类型？ 因为指针的算术运算会暗度陈仓，如果对char指针加1，指针会指向存储器中下一个地址，那是因为char就占1个字节；如果是int指针，int通常占4个字节，如果对int指针加1，编译后的代码就会对存储器地址加4    数据类">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/10/指针详解/"/>
+
+
+
+
+
+  <title>指针详解 | 小鱼仙馆的正宫</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小鱼仙馆的正宫</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">看似沉寂，实则暗潮汹涌；因为一切生长拔节，都在沉默中进行</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/10/指针详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Afra Thawne">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小鱼仙馆的正宫">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">指针详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-10T14:20:26+08:00">
+                2018-10-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/c语言/" itemprop="url" rel="index">
+                    <span itemprop="name">c语言</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="指针变量"><a href="#指针变量" class="headerlink" title="指针变量"></a>指针变量</h3><p>指针是一种变量，也称指针变量，它的值是内存地址。指针包含的是变量的地址，而变量又有自己的具体值。变量名是直接引用了一个值，指针名是间接引用了一个值。</p>
+<p>为什么指针有类型？</p>
+<p>因为指针的算术运算会暗度陈仓，如果对char指针加1，指针会指向存储器中下一个地址，那是因为char就占1个字节；如果是int指针，int通常占4个字节，如果对int指针加1，编译后的代码就会对存储器地址加4</p>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th style="text-align:center">长度(字节)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>byte</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td>char</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td>short</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td>int</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td>long</td>
+<td style="text-align:center">8</td>
+</tr>
+<tr>
+<td>float</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td>double</td>
+<td style="text-align:center">8</td>
+</tr>
+</tbody>
+</table>
+<p>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int nums=&#123;1,2,3&#125;;</span><br><span class="line">printf(&quot;nums 的地址是%p\n&quot;,nums);</span><br><span class="line">printf(&quot;nums+1的地址是%p\n&quot;,nums+1);</span><br></pre></td></tr></table></figure>
+<p>声明一个指针变量：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int *qPtr,q;</span><br></pre></td></tr></table></figure></p>
+<p>q是整型变量，表示存放一个整数值；</p>
+<p>qPtr是一个整型指针变量，表示<strong>要存放一个变量的地址，而这个变量是整数类型</strong>。qPtr表示一个指向整型的指针。“*”只是一个指针类型标识符，指针变量的声明也可以写成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int *qPtr;</span><br></pre></td></tr></table></figure></p>
+<p>指针变量的赋值可以在声明的时候进行，也可以在声明后赋值。例如，给一个指针变量赋值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int q=5;</span><br><span class="line">int *qPtr=&amp;q;</span><br></pre></td></tr></table></figure></p>
+<p>也可以在声明后赋值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int q=5,*qPtr;</span><br><span class="line">qPtr=&amp;q;</span><br></pre></td></tr></table></figure></p>
+<h3 id="指针变量的引用"><a href="#指针变量的引用" class="headerlink" title="指针变量的引用"></a>指针变量的引用</h3><p>指针变量和变量一样，都可以对数据进行操作。指针变量的操作主要是通过取地址运算符&amp;和指针运算符*来实现的。</p>
+<ul>
+<li>&amp;a指的是变量a的地址</li>
+<li>*ptr指的是变量ptr所指向的内存单元存放的内容，开始申明的时候，如果没有给ptr赋值，就并不知道它的值是多少。</li>
+</ul>
+<h3 id="指针与数组"><a href="#指针与数组" class="headerlink" title="指针与数组"></a>指针与数组</h3><p>指针和变量的结合就有了指针变量和变量指针，那么同样，指针与数组的结合就有了数组指针和指针数组。数组指针指的是指向数组的指针，指针数组也是一组指针变量。</p>
+<ol>
+<li><p>指向数组元素的指针<br>指针可以指向变量，当然也可以指向数组和数组元素。数组的指针，指的是数组的首地址（起始地址），数组元素的指针指向该数组元素的地址。</p>
+<p>数组变量好比指针，当你创建了一个数组，数组变量就可以当做指针使用，它指向数组在存储器中的起始位置。当在C语言中的函数中看到这样一行代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">char quote[]=&quot;Cookie make you fat&quot;;</span><br></pre></td></tr></table></figure>
+<p>quote变量代表字符串中第一个字符的地址，即Cookie中’C’的位置。计算机会为字符串的每一个字符以及结束字符\0在栈上分配空间，并把首字符的地址和quote变量关联起来，代码中只要出现这个quote变量，计算机就会把它替换成字符串首字符的地址。</p>
+<p>例如，我们定义两个变量，即一个整型数组和一个指针变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int a[5]=&#123;10,20,30,40,50&#125;;</span><br><span class="line">int *aPtr;</span><br></pre></td></tr></table></figure>
+<p>这里，a就是一个数组，它包含了5个整型数据，变量名a就是数组a的首地址，它与&amp;a[0]等价。如果令aPtr=&amp;a[0]，或者aPtr=a,则aPtr也指向了数组a的首地址.</p>
+<p>指针也可以进行算术运算，但不是像整数那样的算术运算。当指针加上一个数或者减去一个数时，并不是简单地加上或者减去其值，而是加上或者减去<strong>该整数与指针指向对象的大小的乘积</strong>。这里假设指针的初值是4000，对于aPtr+=3，如果一个整数占用4个字节，则aPtr=4000+4×3=4012。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">   int main()&#123;</span><br><span class="line">	int contestants[]=&#123;1,2,3&#125;;</span><br><span class="line">	int *choice=contestants;         #此时的choice指针指向contestants数组</span><br><span class="line">	contestants[0]=2;</span><br><span class="line">	contestants[1]=contestants[2];</span><br><span class="line">	contestants[2]=*choice;</span><br><span class="line">	printf(&quot;我选%i号男嘉宾&quot;,contestants[2]);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">`contestants[2]==*choice==contestants[0]==2`</span><br><span class="line"></span><br><span class="line">## 函数指针与指针函数</span><br><span class="line">前者强调的是指针，后者强调的是函数</span><br><span class="line"></span><br><span class="line">1. 函数指针</span><br><span class="line"></span><br><span class="line">    指针可以指向函数，函数指针就是指向函数的指针。函数名实际上是程序在内存中的起始地址。而指向函数的指针可以把地址传递给函数，也可以从函数返回给指向函数的指针。</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>int Sum(int a,int b);<br>void main(){<br>    int a,b;<br>    int (<em>fun)(int,int);<br>    printf(“请输入两个数：”);<br>    scanf(“%d,%d”,&amp;a,&amp;b);<br>    fun=Sum;<br>    printf(“使用函数调用的结果：%d+%d=%d\n”,a,b,Sum(a,b));<br>    printf(“使用函数指针调用的结果:%d+%d=%d\n”,a,b,(</em>fun)(a,b));<br>}<br>Sum(int m,int n){<br>    return m+n;<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## 指向结构体的指针</span><br><span class="line">指针同样可以指向结构体变量。指向结构体变量的指针的值是结构体变量的起始地址。指针可以指向结构体，也可以指向结构体数组。指向结构体的指针和指向变量以及指向数组的指针的用法类似。</span><br></pre></td></tr></table></figure></p>
+<p>struct AGE<br>{<br>    int year;<br>    int month;<br>    int day;<br>};<br>struct STUDENT<br>{<br>    char name[20];  //姓名<br>    int num;  //学号<br>    struct AGE birthday;  //生日<br>    float score;  //分数<br>};<br>int main(void)<br>{<br>    struct STUDENT student1; /<em>用struct STUDENT结构体类型定义结构体变量student1</em>/<br>    struct STUDENT <em>p = NULL;  /</em>定义一个指向struct STUDENT结构体类型的指针变量p<em>/<br>    p = &student1;  /</em>p指向结构体变量student1的首地址, 即第一个成员的地址<em>/<br>    strcpy((</em>p).name, “小明”);  //(<em>p).name等价于student1.name<br>    (</em>p).birthday.year = 1989;<br>    (<em>p).birthday.month = 3;<br>    (</em>p).birthday.day = 29;<br>    (<em>p).num = 1207041;<br>    (</em>p).score = 100;<br>    printf(“name : %s\n”, (<em>p).name);  //(</em>p).name不能写成p<br>    printf(“birthday : %d-%d-%d\n”, (<em>p).birthday.year, (</em>p).birthday.month, (<em>p).birthday.day);<br>    printf(“num : %d\n”, (</em>p).num);<br>    printf(“score : %.1f\n”, (*p).score);<br>    return 0;<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">从此可以看到，用指针引用结构体变量成员的方式是：</span><br><span class="line">`(*指针变量名).成员名`</span><br><span class="line"></span><br><span class="line">从该程序也可以看出，由于指针变量p指向的是结构体变量student1第一个成员的地址，即字符数组name的首地址，所以p和(*p).name是等价的，表示同一个内存单元的地址。</span><br><span class="line"></span><br><span class="line">当然，这也可以表示为</span><br><span class="line"></span><br><span class="line">`指针变量名-&gt;成员名`</span><br></pre></td></tr></table></figure></p>
+<p>struct AGE<br>{<br>    int year;<br>    int month;<br>    int day;<br>};<br>struct STUDENT<br>{<br>    char name[20];  //姓名<br>    int num;  //学号<br>    struct AGE birthday;  /<em>用struct AGE结构体类型定义结构体变量birthday, 生日</em>/<br>    float score;  //分数<br>};<br>int main(void)<br>{<br>    struct STUDENT student1; /<em>用struct STUDENT结构体类型定义结构体变量student1</em>/<br>    struct STUDENT <em>p = NULL;  /</em>定义struct STUDENT结构体类型的指针变量p<em>/<br>    p = &student1;  /</em>p指向结构体变量student1的首地址, 即第一项的地址*/<br>    strcpy(p-&gt;name, “小明”);<br>    p-&gt;birthday.year = 1989;<br>    p-&gt;birthday.month = 3;<br>    p-&gt;birthday.day = 29;<br>    p-&gt;num = 1207041;<br>    p-&gt;score = 100;<br>    printf(“name : %s\n”, p-&gt;name);  //p-&gt;name不能写成p<br>    printf(“birthday : %d-%d-%d\n”, p-&gt;birthday.year, p-&gt;birthday.month, p-&gt;birthday.day);<br>    printf(“num : %d\n”, p-&gt;num);<br>    printf(“score : %.1f\n”, p-&gt;score);<br>    return 0;<br>}<br><code>`</code></p>
+<p>综上所述，以下 3 种形式是等价的：</p>
+<ul>
+<li>结构体变量.成员名。</li>
+<li>(*指针变量).成员名。</li>
+<li>指针变量-&gt;成员名。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/10/线性表/" rel="next" title="线性表">
+                <i class="fa fa-chevron-left"></i> 线性表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/10/动态内存分配与释放/" rel="prev" title="动态内存分配与释放">
+                动态内存分配与释放 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Afra Thawne" />
+            
+              <p class="site-author-name" itemprop="name">Afra Thawne</p>
+              <p class="site-description motion-element" itemprop="description">Google算法工程师</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">78</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/afraquick" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#指针变量"><span class="nav-number">1.</span> <span class="nav-text">指针变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指针变量的引用"><span class="nav-number">2.</span> <span class="nav-text">指针变量的引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指针与数组"><span class="nav-number">3.</span> <span class="nav-text">指针与数组</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Afra Thawne</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
